@@ -40,7 +40,9 @@ public class DefaultBeanFactory {
 
     public Object createBean(String beanName) {
         BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
-        return instantiate(beanDefinition);
+        Object instantiate = instantiate(beanDefinition);
+        singletonBeanMap.put(beanName, instantiate);
+        return instantiate;
     }
 
     public Object instantiate(BeanDefinition beanDefinition) {
@@ -49,7 +51,7 @@ public class DefaultBeanFactory {
             Object o = aClass.getDeclaredConstructor().newInstance();
             if(beanDefinition.getPropertyValueList() != null) {
                 for (BeanDefinition.PropertyValue propertyValue : beanDefinition.getPropertyValueList()) {
-                    Method declaredMethod = aClass.getDeclaredMethod(propertyValue.getName());
+                    Method declaredMethod = aClass.getDeclaredMethod(propertyValue.getName(), propertyValue.getObject().getClass());
                     declaredMethod.invoke(o, propertyValue.getObject());
                 }
             }

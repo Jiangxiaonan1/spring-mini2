@@ -8,4 +8,12 @@ import com.minispring2.demo.dao.UserDao;
  **/
 public class UserService {
     UserDao UserDao;
+
+    public UserDao getUserDao() {
+        return UserDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        UserDao = userDao;
+    }
 }
