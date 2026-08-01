@@ -51,27 +51,21 @@ public class DefaultBeanFactory {
     }
 
     public Object instantiate(BeanDefinition beanDefinition) {
-        Class aClass = beanDefinition.getaClass();
+        Class<?> aClass = beanDefinition.getaClass();
         try {
             Object o = aClass.getDeclaredConstructor().newInstance();
-            if(beanDefinition.getPropertyValueList() != null && beanDefinition.getPropertyValueList().size() > 0) {
+            if(beanDefinition.getPropertyValueList() != null && !beanDefinition.getPropertyValueList().isEmpty()) {
                 for (BeanDefinition.PropertyValue propertyValue : beanDefinition.getPropertyValueList()) {
                     Object fieldValue = propertyValue.getFieldValue();
                     if(fieldValue instanceof RuntimeBeanReference) {
                         fieldValue = getBean(((RuntimeBeanReference) fieldValue).getBeanName());
                     }
-                    Method declaredMethod = aClass.getDeclaredMethod("set" + propertyValue.getFieldName().substring(0, 1).toUpperCase() + propertyValue.getFieldName().substring(1, propertyValue.getFieldName().length()), fieldValue.getClass());
+                    Method declaredMethod = aClass.getDeclaredMethod("set" + propertyValue.getFieldName().substring(0, 1).toUpperCase() + propertyValue.getFieldName().substring(1), fieldValue.getClass());
                     declaredMethod.invoke(o, fieldValue);
                 }
             }
             return o;
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
 

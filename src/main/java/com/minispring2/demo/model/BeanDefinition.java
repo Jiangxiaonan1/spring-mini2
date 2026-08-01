@@ -5,7 +5,7 @@ import java.util.List;
 
 public class BeanDefinition {
 
-    private Class aClass;
+    private Class<?> aClass;
 
     private List<PropertyValue> propertyValueList = new ArrayList<>();
 
@@ -30,11 +30,11 @@ public class BeanDefinition {
         }
     }
 
-    public Class getaClass() {
+    public Class<?> getaClass() {
         return aClass;
     }
 
-    public void setaClass(Class aClass) {
+    public void setaClass(Class<?> aClass) {
         this.aClass = aClass;
     }
 
