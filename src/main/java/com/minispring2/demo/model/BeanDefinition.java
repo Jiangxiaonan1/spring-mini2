@@ -10,23 +10,23 @@ public class BeanDefinition {
     private List<PropertyValue> propertyValueList = new ArrayList<>();
 
     public static class PropertyValue {
-        private String name;
-        private Object object;
+        private String fieldName;
+        private Object fieldValue;
 
-        public String getName() {
-            return name;
+        public String getFieldName() {
+            return fieldName;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setFieldName(String fieldName) {
+            this.fieldName = fieldName;
         }
 
-        public Object getObject() {
-            return object;
+        public Object getFieldValue() {
+            return fieldValue;
         }
 
-        public void setObject(Object object) {
-            this.object = object;
+        public void setFieldValue(Object fieldValue) {
+            this.fieldValue = fieldValue;
         }
     }
 

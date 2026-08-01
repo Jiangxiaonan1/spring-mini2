@@ -1,6 +1,7 @@
 package com.minispring2.core;
 
 import com.minispring2.demo.model.BeanDefinition;
+import com.minispring2.demo.model.RuntimeBeanReference;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,6 +41,9 @@ public class DefaultBeanFactory {
 
     public Object createBean(String beanName) {
         BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
+        if(beanDefinition == null) {
+            throw new RuntimeException("未找到BeanDefinition：" + beanName);
+        }
         Object instantiate = instantiate(beanDefinition);
         singletonBeanMap.put(beanName, instantiate);
         return instantiate;
@@ -49,10 +53,14 @@ public class DefaultBeanFactory {
         Class aClass = beanDefinition.getaClass();
         try {
             Object o = aClass.getDeclaredConstructor().newInstance();
-            if(beanDefinition.getPropertyValueList() != null) {
+            if(beanDefinition.getPropertyValueList() != null && beanDefinition.getPropertyValueList().size() > 0) {
                 for (BeanDefinition.PropertyValue propertyValue : beanDefinition.getPropertyValueList()) {
-                    Method declaredMethod = aClass.getDeclaredMethod(propertyValue.getName(), propertyValue.getObject().getClass());
-                    declaredMethod.invoke(o, propertyValue.getObject());
+                    Object fieldValue = propertyValue.getFieldValue();
+                    if(fieldValue instanceof RuntimeBeanReference) {
+                        fieldValue = getBean(((RuntimeBeanReference) fieldValue).getBeanName());
+                    }
+                    Method declaredMethod = aClass.getDeclaredMethod("set" + propertyValue.getFieldName().substring(0, 1).toUpperCase() + propertyValue.getFieldName().substring(1, propertyValue.getFieldName().length()), fieldValue.getClass());
+                    declaredMethod.invoke(o, fieldValue);
                 }
             }
             return o;
