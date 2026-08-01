@@ -3,9 +3,10 @@ package com.minispring2.demo.model;
 import com.minispring2.demo.dao.UserDao;
 
 /**
- * @description
- * @create 2026-07-28 16:02:15
- **/
+ * 演示用的用户服务 Bean，通过属性注入依赖 {@link com.minispring2.demo.dao.UserDao}。
+ *
+ * @since 2026-07-28
+ */
 public class UserService {
 
     private String name;
@@ -28,3 +29,4 @@ public class UserService {
         UserDao = userDao;
     }
 }
+

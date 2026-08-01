@@ -1,7 +1,7 @@
 package com.minispring2.demo.model;
 
 /**
- * BeanDefinition的属性，与基本数据类型区分
+ * Bean 属性中的依赖引用，用于和普通值（如 String）区分。
  */
 public class RuntimeBeanReference {
 

@@ -6,9 +6,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
- * @description
- * @create 2026-07-28 15:28:18
- **/
+ * Phase1：验证单例注册与获取。
+ *
+ * @since 2026-07-28
+ */
 public class Phase1Test {
 
     @Test

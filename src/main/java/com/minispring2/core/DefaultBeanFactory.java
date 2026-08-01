@@ -9,9 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @description
- * @create 2026-07-28 13:53:35
- **/
+ * 简易 Bean 工厂：根据 {@link com.minispring2.demo.model.BeanDefinition} 创建并缓存单例 Bean。
+ *
+ * @since 2026-07-28
+ */
 public class DefaultBeanFactory {
 
     private final Map<String, Object> singletonBeanMap = new HashMap<>();
