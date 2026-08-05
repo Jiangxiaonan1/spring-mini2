@@ -7,12 +7,13 @@ import com.minispring2.demo.dao.UserDao;
  *
  * @since 2026-07-28
  */
-public class UserService {
+public class UserService implements UserInterface {
 
     private String name;
 
     private UserDao UserDao;
 
+    @Override
     public String getName() {
         return name;
     }

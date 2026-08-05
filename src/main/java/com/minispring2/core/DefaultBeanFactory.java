@@ -5,7 +5,9 @@ import com.minispring2.demo.model.RuntimeBeanReference;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,6 +21,7 @@ public class DefaultBeanFactory {
     private final Map<String, Object> earlySingletonBeanMap = new HashMap<>();
     private final Map<String, ObjectFactory> beanFactory = new HashMap<>();
     private final Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
+    private final List<BeanPostProfessor> beanPostProfessorList = new ArrayList<>();
 
     public void addSingleton(String beanName, Object o) {
         singletonBeanMap.put(beanName, o);
@@ -64,10 +67,12 @@ public class DefaultBeanFactory {
         beanFactory.put(beanName, () -> instantiate);
         System.out.println(beanName + "填充属性");
         populate(instantiate, beanDefinition);
-        singletonBeanMap.put(beanName, instantiate);
+        Object initialize = initialize(instantiate);
+        singletonBeanMap.put(beanName, initialize);
         earlySingletonBeanMap.remove(beanName);
         beanFactory.remove(beanName);
-        return instantiate;
+
+        return initialize;
     }
 
     public Object instantiate(BeanDefinition beanDefinition) {
@@ -99,5 +104,17 @@ public class DefaultBeanFactory {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("未找到目标方法：" + setter);
         }
+    }
+
+    public void addBeanPostProfessor(BeanPostProfessor beanPostProfessor) {
+        beanPostProfessorList.add(beanPostProfessor);
+    }
+
+    private Object initialize (Object object) {
+        for (BeanPostProfessor beanPostProfessor : beanPostProfessorList) {
+            object = beanPostProfessor.beforeInitialization(object);
+            object = beanPostProfessor.afterInitialization(object);
+        }
+        return object;
     }
 }
