@@ -45,4 +45,12 @@ public class BeanDefinition {
     public void setPropertyValueList(List<PropertyValue> propertyValueList) {
         this.propertyValueList = propertyValueList;
     }
+
+
+    public BeanDefinition() {
+    }
+
+    public BeanDefinition(Class<?> clazz) {
+        this.aClass = clazz;
+    }
 }

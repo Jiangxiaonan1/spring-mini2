@@ -2,6 +2,7 @@ package com.minispring2.core;
 
 import com.minispring2.demo.model.BeanDefinition;
 import com.minispring2.demo.model.RuntimeBeanReference;
+import com.minispring2.support.Scan;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,7 +18,7 @@ import java.util.Map;
  */
 public class DefaultBeanFactory {
 
-    private final Map<String, Object> singletonBeanMap = new HashMap<>();
+    public final Map<String, Object> singletonBeanMap = new HashMap<>();
     private final Map<String, Object> earlySingletonBeanMap = new HashMap<>();
     private final Map<String, ObjectFactory> beanFactory = new HashMap<>();
     private final Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
@@ -116,5 +117,11 @@ public class DefaultBeanFactory {
             object = beanPostProfessor.afterInitialization(object);
         }
         return object;
+    }
+
+    public void scan(String basePackage) {
+        Scan scan = new Scan(this.getClass().getClassLoader(), beanDefinitionMap);
+        scan.scan("com.minispring2.web");
+
     }
 }

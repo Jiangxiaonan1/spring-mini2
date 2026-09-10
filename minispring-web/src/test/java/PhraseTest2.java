@@ -1,25 +1,23 @@
-import com.minispring2.web.controller.UserController;
+import com.minispring2.core.DefaultBeanFactory;
 import com.minispring2.web.core.Dispatcher;
 import com.minispring2.web.core.HttpRequest;
 import com.minispring2.web.core.HttpResponse;
-import com.minispring2.web.core.RequestMapping;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 
 /**
  *
- * @since 2026-09-09 17:16:48
+ * @since 2026-09-10 15:00:42
  **/
-public class PhraseTest1 {
+public class PhraseTest2 {
 
     @Test
-    public void test() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    public void test() throws InvocationTargetException, IllegalAccessException {
+        DefaultBeanFactory defaultBeanFactory = new DefaultBeanFactory();
+        defaultBeanFactory.scan("com.minispring2.web");
+
         Dispatcher dispatcher = new Dispatcher();
-        RequestMapping requestMapping = new RequestMapping();
-        requestMapping.methodName = UserController.class.getMethod("hello");
-        requestMapping.object = UserController.class.newInstance();
-        dispatcher.requestMappingMap.put("hello", requestMapping);
 
         HttpRequest httpRequest = new HttpRequest();
         httpRequest.requestUrl = "hello";
@@ -28,5 +26,4 @@ public class PhraseTest1 {
 
         System.out.println(httpResponse.responseBody);
     }
-
 }
