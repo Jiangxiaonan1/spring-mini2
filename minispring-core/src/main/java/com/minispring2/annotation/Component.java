@@ -7,9 +7,9 @@ import java.lang.annotation.Target;
 
 /**
  * @description
- * @create 2026-09-10 10:26:39
+ * @create 2026-09-11 09:53:58
  **/
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Controller {
+public @interface Component {
 }

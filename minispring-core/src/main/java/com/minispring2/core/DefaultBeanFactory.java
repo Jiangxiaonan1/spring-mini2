@@ -124,4 +124,11 @@ public class DefaultBeanFactory {
         scan.scan("com.minispring2.web");
 
     }
+
+    public void preInstantiateSingletons() {
+        for (String beanName : beanDefinitionMap.keySet()) {
+            getBean(beanName);
+        }
+    }
+
 }

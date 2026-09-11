@@ -1,10 +1,12 @@
 package com.minispring2.support;
 
-import com.minispring2.annotation.Controller;
+import com.minispring2.annotation.AnnotationUtils;
+import com.minispring2.annotation.Component;
 import com.minispring2.demo.model.BeanDefinition;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -32,12 +34,13 @@ public class Scan {
                 File dir = new File(url.toURI());
                 for (File file : dir.listFiles()) {
                     if(file.isDirectory()) {
-                        scan(file.getPath());
+                        scan(packageName + "." + file.getName());
                     } else if(file.getName().endsWith(".class")) {
-                        Class<?> aClass = classLoader.loadClass(file.getPath().replace(".", "/"));
-                        beanDefinitionMap.put(file.getName(), new BeanDefinition(aClass));
-                        if(aClass.isAnnotationPresent(Controller.class)) {
+                        String simpleName = file.getName().substring(0, file.getName().length() - ".class".length());
+                        Class<?> aClass = classLoader.loadClass(packageName.replace("/", ".") + "." + simpleName);
 
+                        if(AnnotationUtils.hasMeta(aClass.getAnnotations(), Component.class) && !aClass.isInterface() && !aClass.isAnnotation() && !Modifier.isAbstract(aClass.getModifiers())) {
+                            beanDefinitionMap.put(simpleName.substring(0, 1).toUpperCase() + simpleName.substring(1), new BeanDefinition(aClass));
                         }
                     }
                 }

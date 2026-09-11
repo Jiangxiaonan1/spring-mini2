@@ -1,6 +1,7 @@
 package com.minispring2.web.controller;
 
-import com.minispring2.annotation.Controller;
+import com.minispring2.web.annotation.Controller;
+import com.minispring2.web.annotation.RequestMapping;
 
 /**
  *
@@ -8,6 +9,8 @@ import com.minispring2.annotation.Controller;
  **/
 @Controller
 public class UserController {
+
+    @RequestMapping("/hello")
     public String hello () {
         return "hello";
     }

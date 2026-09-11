@@ -1,10 +1,12 @@
-import com.minispring2.core.DefaultBeanFactory;
+import com.minispring2.core.MiniApplicationContext;
 import com.minispring2.web.core.Dispatcher;
 import com.minispring2.web.core.HttpRequest;
 import com.minispring2.web.core.HttpResponse;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -14,16 +16,18 @@ public class PhraseTest2 {
 
     @Test
     public void test() throws InvocationTargetException, IllegalAccessException {
-        DefaultBeanFactory defaultBeanFactory = new DefaultBeanFactory();
-        defaultBeanFactory.scan("com.minispring2.web");
+        MiniApplicationContext miniApplicationContext = new MiniApplicationContext("com.minispring2.web");
+        miniApplicationContext.refresh();
 
         Dispatcher dispatcher = new Dispatcher();
+        dispatcher.init(miniApplicationContext.defaultBeanFactory);
 
         HttpRequest httpRequest = new HttpRequest();
-        httpRequest.requestUrl = "hello";
+        httpRequest.requestUrl = "/hello";
         HttpResponse httpResponse = new HttpResponse();
         dispatcher.doService(httpRequest, httpResponse);
 
         System.out.println(httpResponse.responseBody);
+        assertEquals("hello", httpResponse.responseBody);
     }
 }
