@@ -1,5 +1,6 @@
 package com.minispring2.demo.model;
 
+import com.minispring2.annotation.Component;
 import com.minispring2.demo.dao.UserDao;
 
 /**
@@ -7,6 +8,7 @@ import com.minispring2.demo.dao.UserDao;
  *
  * @since 2026-07-28
  */
+@Component
 public class UserService implements UserInterface {
 
     private String name;

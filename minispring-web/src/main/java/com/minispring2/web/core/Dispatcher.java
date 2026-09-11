@@ -18,7 +18,7 @@ public class Dispatcher {
     public final Map<String, HandlerMethod> requestMappingMap = new HashMap<>();
 
     public void init(DefaultBeanFactory defaultBeanFactory) {
-        Map<String, Object> singletonBeanMap = defaultBeanFactory.singletonBeanMap;
+        Map<String, Object> singletonBeanMap = defaultBeanFactory.getBeansWithAnnotation(Controller.class);
         for (String key : singletonBeanMap.keySet()) {
             Object o = singletonBeanMap.get(key);
             Class<?> aClass = o.getClass();

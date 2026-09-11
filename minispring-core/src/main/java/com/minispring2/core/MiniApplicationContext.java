@@ -5,10 +5,9 @@ package com.minispring2.core;
  * @since 2026-09-11 14:08:37
  **/
 public class MiniApplicationContext {
-    String basicPackage;
+    public String[] basicPackages;
     public DefaultBeanFactory defaultBeanFactory;
-    public MiniApplicationContext(String basicPackage) {
-        this.basicPackage = basicPackage;
+    public MiniApplicationContext() {
     }
     public void refresh() {
         /**
@@ -20,7 +19,10 @@ public class MiniApplicationContext {
          */
         DefaultBeanFactory defaultBeanFactory = new DefaultBeanFactory();
         this.defaultBeanFactory = defaultBeanFactory;
-        defaultBeanFactory.scan(basicPackage);
+        if(basicPackages != null) {
+            defaultBeanFactory.scan(basicPackages);
+        }
+
         defaultBeanFactory.preInstantiateSingletons();
     }
 }

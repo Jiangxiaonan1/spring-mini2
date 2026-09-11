@@ -1,9 +1,11 @@
 package com.minispring2.core;
 
+import com.minispring2.annotation.AnnotationUtils;
 import com.minispring2.demo.model.BeanDefinition;
 import com.minispring2.demo.model.RuntimeBeanReference;
 import com.minispring2.support.Scan;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -119,9 +121,11 @@ public class DefaultBeanFactory {
         return object;
     }
 
-    public void scan(String basePackage) {
+    public void scan(String... basePackages) {
         Scan scan = new Scan(this.getClass().getClassLoader(), beanDefinitionMap);
-        scan.scan("com.minispring2.web");
+        for (String basePackage : basePackages) {
+            scan.scan(basePackage);
+        }
 
     }
 
@@ -129,6 +133,18 @@ public class DefaultBeanFactory {
         for (String beanName : beanDefinitionMap.keySet()) {
             getBean(beanName);
         }
+    }
+
+    public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> aclass) {
+        Map<String, Object> stringObjectMap = new HashMap<>();
+        for (String key : singletonBeanMap.keySet()) {
+            Object o = singletonBeanMap.get(key);
+            if(AnnotationUtils.hasMeta(o.getClass().getAnnotations(), aclass)) {
+                stringObjectMap.put(key, o);
+            }
+        }
+
+        return stringObjectMap;
     }
 
 }

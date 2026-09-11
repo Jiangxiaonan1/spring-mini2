@@ -16,7 +16,8 @@ public class PhraseTest2 {
 
     @Test
     public void test() throws InvocationTargetException, IllegalAccessException {
-        MiniApplicationContext miniApplicationContext = new MiniApplicationContext("com.minispring2.web");
+        MiniApplicationContext miniApplicationContext = new MiniApplicationContext();
+        miniApplicationContext.basicPackages = new String[]{"com.minispring2.demo", "com.minispring2.web"};
         miniApplicationContext.refresh();
 
         Dispatcher dispatcher = new Dispatcher();
@@ -28,6 +29,6 @@ public class PhraseTest2 {
         dispatcher.doService(httpRequest, httpResponse);
 
         System.out.println(httpResponse.responseBody);
-        assertEquals("hello", httpResponse.responseBody);
+        assertEquals("hello world", httpResponse.responseBody);
     }
 }

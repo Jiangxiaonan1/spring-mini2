@@ -28,6 +28,14 @@ public class BeanDefinition {
         public void setFieldValue(Object fieldValue) {
             this.fieldValue = fieldValue;
         }
+
+        public PropertyValue() {
+        }
+
+        public PropertyValue(String fieldName, Object fieldValue) {
+            this.fieldName = fieldName;
+            this.fieldValue = fieldValue;
+        }
     }
 
     public Class<?> getaClass() {
