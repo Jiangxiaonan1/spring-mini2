@@ -54,7 +54,7 @@ public class Scan {
                                     }
                                 }
                             }
-                            beanDefinitionMap.put(simpleName.substring(0, 1).toUpperCase() + simpleName.substring(1), beanDefinition);
+                            beanDefinitionMap.put(simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1), beanDefinition);
                         }
                     }
                 }
