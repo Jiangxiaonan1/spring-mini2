@@ -1,8 +1,3 @@
-import com.minispring2.web.controller.UserController;
-import com.minispring2.web.core.Dispatcher;
-import com.minispring2.web.core.HttpRequest;
-import com.minispring2.web.core.HttpResponse;
-import com.minispring2.web.core.HandlerMethod;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,18 +10,18 @@ public class PhraseTest1 {
 
     @Test
     public void test() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-        Dispatcher dispatcher = new Dispatcher();
-        HandlerMethod handlerMethod = new HandlerMethod();
-        handlerMethod.methodName = UserController.class.getMethod("hello");
-        handlerMethod.object = UserController.class.newInstance();
-        dispatcher.requestMappingMap.put("hello", handlerMethod);
-
-        HttpRequest httpRequest = new HttpRequest();
-        httpRequest.requestUrl = "hello";
-        HttpResponse httpResponse = new HttpResponse();
-        dispatcher.doService(httpRequest, httpResponse);
-
-        System.out.println(httpResponse.responseBody);
+//        Dispatcher dispatcher = new Dispatcher();
+//        HandlerMethod handlerMethod = new HandlerMethod();
+//        handlerMethod.methodName = UserController.class.getMethod("hello");
+//        handlerMethod.object = UserController.class.newInstance();
+//        dispatcher.requestMappingMap.put("/hello", handlerMethod);
+//
+//        HttpRequest httpRequest = new HttpRequest();
+//        httpRequest.requestUrl = "/hello";
+//        HttpResponse httpResponse = new HttpResponse();
+//        dispatcher.doService(httpRequest, httpResponse);
+//
+//        System.out.println(httpResponse.responseBody);
     }
 
 }

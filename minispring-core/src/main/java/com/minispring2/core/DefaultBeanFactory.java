@@ -61,28 +61,26 @@ public class DefaultBeanFactory {
     }
 
     public Object getBeanForType(Class<?> clazz) {
-        for (String beanName : singletonBeanMap.keySet()) {
-            Object object = singletonBeanMap.get(beanName);
-            /**
-             * A.class.isAssignableFrom(B.class)
-             *
-             * 从 A 的视角读：
-             *
-             * A 能否接收一个来自 B 的值？
-             */
-            if(clazz.isAssignableFrom(object.getClass())) {
-                return object;
-            }
+        List<String> beanNames = getBeanNamesForType(clazz);
+        if(beanNames.size() == 0) {
+            throw new RuntimeException("未找到该类型的Bean，" + clazz.getName());
+        }
+        if(beanNames.size() > 1) {
+            throw new RuntimeException("该类型匹配多个Bean，" + clazz.getName());
         }
 
+        return getBean(beanNames.get(0));
+
+    }
+
+    public List<String> getBeanNamesForType(Class<?> clazz) {
+        List<String> beanNames = new ArrayList<>();
         for (String beanName : beanDefinitionMap.keySet()) {
-            BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
-            if(clazz.isAssignableFrom(beanDefinition.getaClass())) {
-                return createBean(beanDefinition.getBeanName());
+            if(clazz.isAssignableFrom(beanDefinitionMap.get(beanName).getaClass())) {
+                beanNames.add(beanName);
             }
         }
-
-        return null;
+        return beanNames;
     }
 
     public Object createBean(String beanName) {
