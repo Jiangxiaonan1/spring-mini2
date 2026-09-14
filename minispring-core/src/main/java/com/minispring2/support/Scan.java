@@ -50,11 +50,13 @@ public class Scan {
                                 List<BeanDefinition.PropertyValue> propertyValueList = beanDefinition.getPropertyValueList();
                                 for (Field field : declaredFields) {
                                     if(AnnotationUtils.hasMeta(field.getAnnotations(), Autowired.class)) {
-                                        propertyValueList.add(new BeanDefinition.PropertyValue(field.getName(), new RuntimeBeanReference(field.getName())));
+                                        propertyValueList.add(new BeanDefinition.PropertyValue(field.getName(), new RuntimeBeanReference(field.getName(), field.getType())));
                                     }
                                 }
                             }
-                            beanDefinitionMap.put(simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1), beanDefinition);
+                            String beanName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1);
+                            beanDefinition.setBeanName(beanName);
+                            beanDefinitionMap.put(beanName, beanDefinition);
                         }
                     }
                 }

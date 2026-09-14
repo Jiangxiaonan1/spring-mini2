@@ -6,8 +6,8 @@ import com.minispring2.demo.model.RuntimeBeanReference;
 import com.minispring2.support.Scan;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +60,31 @@ public class DefaultBeanFactory {
         return createBean(beanName);
     }
 
+    public Object getBeanForType(Class<?> clazz) {
+        for (String beanName : singletonBeanMap.keySet()) {
+            Object object = singletonBeanMap.get(beanName);
+            /**
+             * A.class.isAssignableFrom(B.class)
+             *
+             * 从 A 的视角读：
+             *
+             * A 能否接收一个来自 B 的值？
+             */
+            if(clazz.isAssignableFrom(object.getClass())) {
+                return object;
+            }
+        }
+
+        for (String beanName : beanDefinitionMap.keySet()) {
+            BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
+            if(clazz.isAssignableFrom(beanDefinition.getaClass())) {
+                return createBean(beanDefinition.getBeanName());
+            }
+        }
+
+        return null;
+    }
+
     public Object createBean(String beanName) {
         BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
         if(beanDefinition == null) {
@@ -88,24 +113,30 @@ public class DefaultBeanFactory {
     }
 
     public void populate (Object o, BeanDefinition beanDefinition) {
-        String setter = null;
         try {
             if(beanDefinition.getPropertyValueList() != null && !beanDefinition.getPropertyValueList().isEmpty()) {
                 for (BeanDefinition.PropertyValue propertyValue : beanDefinition.getPropertyValueList()) {
                     System.out.println("填充的属性值字段名：" + propertyValue.getFieldName());
+                    if("userService".equals(propertyValue.getFieldName())) {
+                        System.out.println(1);
+                    }
                     Object fieldValue = propertyValue.getFieldValue();
                     if(fieldValue instanceof RuntimeBeanReference) {
-                        fieldValue = getBean(((RuntimeBeanReference) fieldValue).getBeanName());
+                        fieldValue = getBeanForType(((RuntimeBeanReference) fieldValue).getaClass());
                     }
-                    setter = "set" + propertyValue.getFieldName().substring(0, 1).toUpperCase() + propertyValue.getFieldName().substring(1);
-                    Method declaredMethod = o.getClass().getDeclaredMethod(setter, fieldValue.getClass());
-                    declaredMethod.invoke(o, fieldValue);
+
+                    for (Field field : o.getClass().getDeclaredFields()) {
+                        if(field.getName().equals(propertyValue.getFieldName())) {
+                            field.setAccessible(true);
+                            field.set(o, fieldValue);
+                            break;
+                        }
+                    }
+
                 }
             }
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("未找到目标方法：" + setter);
         }
     }
 

@@ -9,6 +9,8 @@ public class BeanDefinition {
 
     private List<PropertyValue> propertyValueList = new ArrayList<>();
 
+    private String beanName;
+
     public static class PropertyValue {
         private String fieldName;
         private Object fieldValue;
@@ -60,5 +62,13 @@ public class BeanDefinition {
 
     public BeanDefinition(Class<?> clazz) {
         this.aClass = clazz;
+    }
+
+    public String getBeanName() {
+        return beanName;
+    }
+
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
     }
 }
