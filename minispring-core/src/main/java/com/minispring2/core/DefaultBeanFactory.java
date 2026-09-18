@@ -1,6 +1,8 @@
 package com.minispring2.core;
 
 import com.minispring2.annotation.AnnotationUtils;
+import com.minispring2.annotation.Autowired;
+import com.minispring2.core.beanPostProfessor.BeanPostProcessor;
 import com.minispring2.demo.model.BeanDefinition;
 import com.minispring2.demo.model.RuntimeBeanReference;
 import com.minispring2.support.Scan;
@@ -24,7 +26,7 @@ public class DefaultBeanFactory {
     private final Map<String, Object> earlySingletonBeanMap = new HashMap<>();
     private final Map<String, ObjectFactory> beanFactory = new HashMap<>();
     private final Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
-    private final List<BeanPostProfessor> beanPostProfessorList = new ArrayList<>();
+    private final List<BeanPostProcessor> beanPostProcessorList = new ArrayList<>();
 
     public void addSingleton(String beanName, Object o) {
         singletonBeanMap.put(beanName, o);
@@ -93,12 +95,31 @@ public class DefaultBeanFactory {
         beanFactory.put(beanName, () -> instantiate);
         System.out.println(beanName + "填充属性");
         populate(instantiate, beanDefinition);
+        if("userController".equals(beanName)) {
+            System.out.println("userController -> populate");
+        }
+        injectAutowiredFields(instantiate);
         Object initialize = initialize(instantiate);
         singletonBeanMap.put(beanName, initialize);
         earlySingletonBeanMap.remove(beanName);
         beanFactory.remove(beanName);
 
         return initialize;
+    }
+
+    public void injectAutowiredFields(Object bean) {
+
+        for (Field field : bean.getClass().getDeclaredFields()) {
+            try {
+                if(AnnotationUtils.hasMeta(field.getAnnotations(), Autowired.class)) {
+                    field.setAccessible(true);
+                    field.set(bean, getBeanForType(field.getType()));
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
     public Object instantiate(BeanDefinition beanDefinition) {
@@ -138,14 +159,14 @@ public class DefaultBeanFactory {
         }
     }
 
-    public void addBeanPostProfessor(BeanPostProfessor beanPostProfessor) {
-        beanPostProfessorList.add(beanPostProfessor);
+    public void addBeanPostProfessor(BeanPostProcessor beanPostProcessor) {
+        beanPostProcessorList.add(beanPostProcessor);
     }
 
     private Object initialize (Object object) {
-        for (BeanPostProfessor beanPostProfessor : beanPostProfessorList) {
-            object = beanPostProfessor.beforeInitialization(object);
-            object = beanPostProfessor.afterInitialization(object);
+        for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
+            object = beanPostProcessor.beforeInitialization(object);
+            object = beanPostProcessor.afterInitialization(object);
         }
         return object;
     }
@@ -159,6 +180,12 @@ public class DefaultBeanFactory {
     }
 
     public void preInstantiateSingletons() {
+        List<String> beanNamesForType = getBeanNamesForType(BeanPostProcessor.class);
+        for (String beanName : beanNamesForType) {
+            Object bean = getBean(beanName);
+            beanPostProcessorList.add((BeanPostProcessor) bean);
+
+        }
         for (String beanName : beanDefinitionMap.keySet()) {
             getBean(beanName);
         }

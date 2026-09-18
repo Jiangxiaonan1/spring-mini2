@@ -1,6 +1,6 @@
-package com.minispring2.core;
+package com.minispring2.core.beanPostProfessor;
 
-public interface BeanPostProfessor {
+public interface BeanPostProcessor {
 
     default Object beforeInitialization(Object object) {
         return object;

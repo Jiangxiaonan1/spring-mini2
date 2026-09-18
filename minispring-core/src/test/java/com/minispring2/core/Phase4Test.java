@@ -1,5 +1,6 @@
 package com.minispring2.core;
 
+import com.minispring2.core.beanPostProfessor.LoggingBeanPostProcessor;
 import com.minispring2.demo.model.BeanDefinition;
 import com.minispring2.demo.model.UserInterface;
 import com.minispring2.demo.model.UserService;
@@ -16,7 +17,7 @@ public class Phase4Test {
     @Test
     public void test() {
         DefaultBeanFactory defaultBeanFactory = new DefaultBeanFactory();
-        LoggingBeanPostProfessor loggingBeanPostProfessor = new LoggingBeanPostProfessor();
+        LoggingBeanPostProcessor loggingBeanPostProfessor = new LoggingBeanPostProcessor();
         defaultBeanFactory.addBeanPostProfessor(loggingBeanPostProfessor);
 
         BeanDefinition beanDefinition = new BeanDefinition();
