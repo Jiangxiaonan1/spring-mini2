@@ -4,8 +4,6 @@ import com.minispring2.web.core.HttpRequest;
 import com.minispring2.web.core.HttpResponse;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.InvocationTargetException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -15,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PhraseTest2 {
 
     @Test
-    public void test() throws InvocationTargetException, IllegalAccessException {
+    public void test() throws Exception {
         MiniApplicationContext miniApplicationContext = new MiniApplicationContext();
         miniApplicationContext.basicPackages = new String[]{"com.minispring2.demo", "com.minispring2.core", "com.minispring2.web"};
         miniApplicationContext.refresh();
