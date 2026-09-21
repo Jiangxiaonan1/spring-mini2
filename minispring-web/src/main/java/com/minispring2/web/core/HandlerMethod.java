@@ -1,6 +1,7 @@
 package com.minispring2.web.core;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  *
@@ -9,4 +10,5 @@ import java.lang.reflect.Method;
 public class HandlerMethod {
     public Object object;
     public Method methodName;
+    public Map<String ,Object> requestParams;
 }

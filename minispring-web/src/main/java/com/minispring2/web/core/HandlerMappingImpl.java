@@ -20,6 +20,17 @@ public class HandlerMappingImpl implements HandlerMapping {
         return requestMappingMap.get(requestUrl);
     }
 
+    public HandlerMethod getHandlerMethod(String requestUrl) {
+        return requestMappingMap.get(requestUrl);
+    }
+
+    public HandlerMethod getHandlerMethod(HttpRequest httpRequest) {
+        HandlerMethod handlerMethod = requestMappingMap.get(httpRequest.requestUrl);
+        handlerMethod.requestParams = httpRequest.requestParams;
+
+        return handlerMethod;
+    }
+
     @Override
     public void autoAddHandlerMethod(DefaultBeanFactory defaultBeanFactory) {
         Map<String, Object> singletonBeanMap = defaultBeanFactory.getBeansWithAnnotation(Controller.class);

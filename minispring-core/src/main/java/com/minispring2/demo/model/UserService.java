@@ -31,5 +31,18 @@ public class UserService implements UserInterface {
     public void setUserDao(UserDao userDao) {
         UserDao = userDao;
     }
+
+    public UserDao getUser(Long id) {
+        UserDao userDao = new UserDao();
+        userDao.setId(id);
+        userDao.setName("Tom");
+        userDao.setAge(20);
+        return userDao;
+    }
+
+    public UserDao addUser(UserDao userDao) {
+        userDao.setId(19787263L);
+        return userDao;
+    }
 }
 
