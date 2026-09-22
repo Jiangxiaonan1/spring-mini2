@@ -8,5 +8,5 @@ import java.lang.reflect.InvocationTargetException;
  **/
 public interface HandlerAdapter {
 
-    void handle(HttpRequest httpRequest, HttpResponse httpResponse) throws InvocationTargetException, IllegalAccessException;
+    void handle(HttpRequest httpRequest, HttpResponse httpResponse, HandlerMethod handlerMethod) throws InvocationTargetException, IllegalAccessException;
 }

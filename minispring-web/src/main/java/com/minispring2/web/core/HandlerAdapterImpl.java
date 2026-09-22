@@ -16,73 +16,66 @@ import java.lang.reflect.Parameter;
  **/
 public class HandlerAdapterImpl implements HandlerAdapter {
 
-    HandlerMapping handlerMapping;
 
     @Override
-    public void handle(HttpRequest httpRequest, HttpResponse httpResponse) throws InvocationTargetException, IllegalAccessException {
-        HandlerMethod handlerMethod = handlerMapping.getHandlerMethod(httpRequest.requestUrl);
-        if (handlerMethod != null) {
-            Object object = handlerMethod.object;
-            Method methodName = handlerMethod.methodName;
-            ObjectMapper objectMapper = new ObjectMapper();
+    public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HandlerMethod handlerMethod) throws InvocationTargetException, IllegalAccessException {
+        Object object = handlerMethod.object;
+        Method methodName = handlerMethod.methodName;
+        ObjectMapper objectMapper = new ObjectMapper();
 
-            Parameter[] parameters = methodName.getParameters();
-            Object[] values = new Object[parameters.length];
-            for (int i = 0; i < parameters.length; i++) {
-                Parameter parameter = parameters[i];
-                if (AnnotationUtils.hasMeta(parameter.getAnnotations(), RequestParam.class)) {
-                    RequestParam annotation = parameter.getAnnotation(RequestParam.class);
-                    Object o = httpRequest.requestParams.get(annotation.value());
-                    if (o != null) {
-                        Class<?> aClass = parameter.getType();
-                        if (aClass == Integer.class || aClass == int.class) {
-                            values[i] = Integer.valueOf(o.toString());
-                        } else if (aClass == Long.class || aClass == long.class) {
-                            values[i] = Long.valueOf(o.toString());
-                        } else if (aClass == Boolean.class || aClass == boolean.class) {
-                            values[i] = Boolean.valueOf(o.toString());
-                        } else if (aClass == String.class || aClass == String.class) {
-                            values[i] = o.toString();
-                        } else {
-                            throw new IllegalArgumentException("不支持的数据类型：" + aClass.getName());
-                        }
-                    }
-
-                } else if (AnnotationUtils.hasMeta(parameter.getAnnotations(), RequestBody.class)) {
-                    RequestBody annotation = parameter.getAnnotation(RequestBody.class);
-                    String requestBody = httpRequest.requestBody;
-                    if (annotation.required() && requestBody == null) {
-                        throw new IllegalArgumentException("请求体参数为空");
-                    }
-                    if (!annotation.required() && requestBody == null) {
-                        values[i] = null;
+        Parameter[] parameters = methodName.getParameters();
+        Object[] values = new Object[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            Parameter parameter = parameters[i];
+            if (AnnotationUtils.hasMeta(parameter.getAnnotations(), RequestParam.class)) {
+                RequestParam annotation = parameter.getAnnotation(RequestParam.class);
+                Object o = httpRequest.requestParams.get(annotation.value());
+                if (o != null) {
+                    Class<?> aClass = parameter.getType();
+                    if (aClass == Integer.class || aClass == int.class) {
+                        values[i] = Integer.valueOf(o.toString());
+                    } else if (aClass == Long.class || aClass == long.class) {
+                        values[i] = Long.valueOf(o.toString());
+                    } else if (aClass == Boolean.class || aClass == boolean.class) {
+                        values[i] = Boolean.valueOf(o.toString());
+                    } else if (aClass == String.class || aClass == String.class) {
+                        values[i] = o.toString();
                     } else {
-                        Class<?> requestBodyType = parameter.getType();
-                        Object o = null;
-                        try {
-                            o = objectMapper.readValue(requestBody, requestBodyType);
-                        } catch (JsonProcessingException e) {
-                            throw new RuntimeException(e);
-                        }
-                        values[i] = o;
+                        throw new IllegalArgumentException("不支持的数据类型：" + aClass.getName());
                     }
                 }
-            }
-            Object result = methodName.invoke(object, values);
-            if(result == null) {
-                httpResponse.responseBody = null;
-            } else if(result instanceof String) {
-                httpResponse.responseBody = result.toString();
-            } else {
-                try {
-                    httpResponse.responseBody = objectMapper.writeValueAsString(result);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
+
+            } else if (AnnotationUtils.hasMeta(parameter.getAnnotations(), RequestBody.class)) {
+                RequestBody annotation = parameter.getAnnotation(RequestBody.class);
+                String requestBody = httpRequest.requestBody;
+                if (annotation.required() && requestBody == null) {
+                    throw new IllegalArgumentException("请求体参数为空");
+                }
+                if (!annotation.required() && requestBody == null) {
+                    values[i] = null;
+                } else {
+                    Class<?> requestBodyType = parameter.getType();
+                    Object o = null;
+                    try {
+                        o = objectMapper.readValue(requestBody, requestBodyType);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    values[i] = o;
                 }
             }
-
+        }
+        Object result = methodName.invoke(object, values);
+        if(result == null) {
+            httpResponse.responseBody = null;
+        } else if(result instanceof String) {
+            httpResponse.responseBody = result.toString();
         } else {
-            httpResponse.responseBody = "404";
+            try {
+                httpResponse.responseBody = objectMapper.writeValueAsString(result);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

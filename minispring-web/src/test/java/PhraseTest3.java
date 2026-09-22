@@ -1,9 +1,7 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minispring2.core.MiniApplicationContext;
 import com.minispring2.demo.dao.UserDao;
-import com.minispring2.web.core.Dispatcher;
-import com.minispring2.web.core.HttpRequest;
-import com.minispring2.web.core.HttpResponse;
+import com.minispring2.web.core.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -28,31 +26,14 @@ public class PhraseTest3 {
         dispatcher.init(miniApplicationContext.defaultBeanFactory);
 
         HttpRequest httpRequest = new HttpRequest();
-        httpRequest.requestUrl = "/getUser";
-        httpRequest.requestParams = new HashMap<String, Object>(){{put("userId", 12345L);}};
-        HttpResponse httpResponse = new HttpResponse();
-        dispatcher.doService(httpRequest, httpResponse);
+        RequestMappingInfo requestMappingInfo = new RequestMappingInfo();
+        requestMappingInfo.path = "/getUser";
+        requestMappingInfo.method = RequestMethod.GET;
+        httpRequest.requestMappingInfo = requestMappingInfo;
 
-        System.out.println(httpResponse.responseBody);
-    }
-
-    /**
-     * requestParam
-     * String -> Integer
-     * @throws Exception
-     */
-    @Test
-    public void testGetUser2() throws Exception {
-        MiniApplicationContext miniApplicationContext = new MiniApplicationContext();
-        miniApplicationContext.basicPackages = new String[]{"com.minispring2.demo", "com.minispring2.core", "com.minispring2.web"};
-        miniApplicationContext.refresh();
-
-        Dispatcher dispatcher = new Dispatcher();
-        dispatcher.init(miniApplicationContext.defaultBeanFactory);
-
-        HttpRequest httpRequest = new HttpRequest();
-        httpRequest.requestUrl = "/getUser";
-        httpRequest.requestParams = new HashMap<String, Object>(){{put("userId", "12345");}};
+        httpRequest.requestParams = new HashMap<String, Object>() {{
+            put("userId", 12345L);
+        }};
         HttpResponse httpResponse = new HttpResponse();
         dispatcher.doService(httpRequest, httpResponse);
 
@@ -64,7 +45,7 @@ public class PhraseTest3 {
      * @throws Exception
      */
     @Test
-    public void testGetUser3() throws Exception {
+    public void testAddUser() throws Exception {
         MiniApplicationContext miniApplicationContext = new MiniApplicationContext();
         miniApplicationContext.basicPackages = new String[]{"com.minispring2.demo", "com.minispring2.core", "com.minispring2.web"};
         miniApplicationContext.refresh();
@@ -79,8 +60,11 @@ public class PhraseTest3 {
         String s = objectMapper.writeValueAsString(userDao);
 
         HttpRequest httpRequest = new HttpRequest();
-        httpRequest.requestUrl = "/addUser";
         httpRequest.requestBody = s;
+        RequestMappingInfo requestMappingInfo = new RequestMappingInfo();
+        requestMappingInfo.path = "/addUser";
+        requestMappingInfo.method = RequestMethod.POST;
+        httpRequest.requestMappingInfo = requestMappingInfo;
         HttpResponse httpResponse = new HttpResponse();
         dispatcher.doService(httpRequest, httpResponse);
 

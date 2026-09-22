@@ -1,11 +1,15 @@
 package com.minispring2.web.core;
 
+import com.minispring2.annotation.AnnotationUtils;
 import com.minispring2.core.DefaultBeanFactory;
 import com.minispring2.web.annotation.Controller;
+import com.minispring2.web.annotation.RequestMapping;
+import com.minispring2.web.common.HttpStatus;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  *
@@ -13,23 +17,37 @@ import java.util.Map;
  **/
 public class HandlerMappingImpl implements HandlerMapping {
 
-    public final Map<String, HandlerMethod> requestMappingMap = new HashMap<>();
+    public final Map<RequestMappingInfo, HandlerMethod> requestMappingInfoMap = new HashMap<>();
 
     @Override
-    public HandlerMethod getHandlerMethod(String requestUrl) {
-        return requestMappingMap.get(requestUrl);
+    public HandlerMethod getHandlerMethodForPath(RequestMappingInfo requestMappingInfo) {
+        for(RequestMappingInfo requestMappingInfoLoop : requestMappingInfoMap.keySet()) {
+            if(Objects.equals(requestMappingInfoLoop.path, requestMappingInfo.path)
+                    && ! Objects.equals(requestMappingInfoLoop.method, requestMappingInfo.method)) {
+                return requestMappingInfoMap.get(requestMappingInfoLoop);
+            }
+        }
+        return null;
     }
 
-    public HandlerMethod getHandlerMethod(String requestUrl) {
-        return requestMappingMap.get(requestUrl);
+    @Override
+    public HandlerMethod getHandlerMethod(RequestMappingInfo requestMappingInfo) {
+        HandlerMethod handlerMethod = requestMappingInfoMap.get(requestMappingInfo);
+        if(handlerMethod == null) {
+            HandlerMethod handlerMethodForPath = getHandlerMethodForPath(requestMappingInfo);
+            if(handlerMethodForPath == null) {
+                HandlerMethod handlerMethod1 = new HandlerMethod();
+                handlerMethod1.failStatus = HttpStatus.NOT_FOUND;
+                return handlerMethod1;
+            } else {
+                handlerMethodForPath.failStatus = HttpStatus.METHOD_NOT_ALLOWED;
+                return handlerMethodForPath;
+            }
+        } else {
+            return handlerMethod;
+        }
     }
 
-    public HandlerMethod getHandlerMethod(HttpRequest httpRequest) {
-        HandlerMethod handlerMethod = requestMappingMap.get(httpRequest.requestUrl);
-        handlerMethod.requestParams = httpRequest.requestParams;
-
-        return handlerMethod;
-    }
 
     @Override
     public void autoAddHandlerMethod(DefaultBeanFactory defaultBeanFactory) {
@@ -41,16 +59,18 @@ public class HandlerMappingImpl implements HandlerMapping {
                 Method[] declaredMethods = aClass.getDeclaredMethods();
                 if(declaredMethods != null) {
                     for (Method method : declaredMethods) {
-                        if(method.isAnnotationPresent(com.minispring2.web.annotation.RequestMapping.class)) {
+                        method.getAnnotations();
+                        if(AnnotationUtils.hasMeta(method.getAnnotations(), RequestMapping.class)) {
                             com.minispring2.web.annotation.RequestMapping annotation = method.getAnnotation(com.minispring2.web.annotation.RequestMapping.class);
                             if(annotation != null && annotation.value() != null) {
-                                if(requestMappingMap.get(annotation.value()) != null) {
+                                RequestMappingInfo requestMappingInfo = new RequestMappingInfo(annotation.value(), annotation.requestMethod());
+                                if(requestMappingInfoMap.get(requestMappingInfo) != null) {
                                     throw new RuntimeException("MVC中出现重复的URL映射");
                                 }
                                 HandlerMethod handlerMethod = new HandlerMethod();
                                 handlerMethod.methodName = method;
                                 handlerMethod.object = o;
-                                requestMappingMap.put(annotation.value(), handlerMethod);
+                                requestMappingInfoMap.put(requestMappingInfo, handlerMethod);
                             }
                         }
                     }

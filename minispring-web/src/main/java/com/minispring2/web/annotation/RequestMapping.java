@@ -12,5 +12,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestMapping {
-    String value();
+    String value() default "";
+    com.minispring2.web.core.RequestMethod requestMethod() default com.minispring2.web.core.RequestMethod.GET;
 }

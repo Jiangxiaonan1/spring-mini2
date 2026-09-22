@@ -1,5 +1,7 @@
 package com.minispring2.web.core;
 
+import com.minispring2.web.common.HttpStatus;
+
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -11,4 +13,5 @@ public class HandlerMethod {
     public Object object;
     public Method methodName;
     public Map<String ,Object> requestParams;
+    public HttpStatus failStatus;
 }

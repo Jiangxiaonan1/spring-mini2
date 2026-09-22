@@ -8,7 +8,9 @@ import com.minispring2.core.DefaultBeanFactory;
  **/
 public interface HandlerMapping {
 
-    HandlerMethod getHandlerMethod(String requestUrl);
+    HandlerMethod getHandlerMethodForPath(RequestMappingInfo requestMappingInfo);
+
+    HandlerMethod getHandlerMethod(RequestMappingInfo requestMappingInfo);
 
     void autoAddHandlerMethod(DefaultBeanFactory defaultBeanFactory);
 }

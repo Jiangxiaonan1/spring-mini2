@@ -18,8 +18,13 @@ public class Dispatcher {
     }
 
     public void doService(HttpRequest httpRequest, HttpResponse httpResponse) throws InvocationTargetException, IllegalAccessException {
+        HandlerMethod handlerMethod = handlerMapping.getHandlerMethod(httpRequest.requestMappingInfo);
+        if(handlerMethod.failStatus != null) {
+            httpResponse.responseBody = String.valueOf(handlerMethod.failStatus.value());
+            return;
+        }
+
         HandlerAdapterImpl handlerAdapter = new HandlerAdapterImpl();
-        handlerAdapter.handlerMapping = handlerMapping;
-        handlerAdapter.handle(httpRequest, httpResponse);
+        handlerAdapter.handle(httpRequest, httpResponse, handlerMethod);
     }
 }

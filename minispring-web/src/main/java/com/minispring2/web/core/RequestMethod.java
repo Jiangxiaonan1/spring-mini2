@@ -5,5 +5,5 @@ package com.minispring2.web.core;
  * @create 2026-09-21 10:54:03
  **/
 public enum RequestMethod {
-    Get,POST
+    GET,POST
 }

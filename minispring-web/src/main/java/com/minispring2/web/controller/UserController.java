@@ -3,10 +3,8 @@ package com.minispring2.web.controller;
 import com.minispring2.annotation.Autowired;
 import com.minispring2.demo.dao.UserDao;
 import com.minispring2.demo.model.UserService;
-import com.minispring2.web.annotation.Controller;
-import com.minispring2.web.annotation.RequestBody;
-import com.minispring2.web.annotation.RequestMapping;
-import com.minispring2.web.annotation.RequestParam;
+import com.minispring2.web.annotation.*;
+import com.minispring2.web.core.RequestMethod;
 
 /**
  *
@@ -26,7 +24,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping("/hello")
+    @RequestMapping(value = "/hello", requestMethod = RequestMethod.GET)
     public String hello () {
         userService.setName(" world");
         return "hello" + userService.getName();
@@ -37,7 +35,7 @@ public class UserController {
         return userService.getUser(userId).toString();
     }
 
-    @RequestMapping("/addUser")
+    @RequestMapping(value = "/addUser", requestMethod = RequestMethod.POST)
     public UserDao addUser(@RequestBody UserDao userDao) {
         return userService.addUser(userDao);
     }
