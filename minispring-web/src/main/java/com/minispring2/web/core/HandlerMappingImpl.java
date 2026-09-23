@@ -40,8 +40,9 @@ public class HandlerMappingImpl implements HandlerMapping {
                 handlerMethod1.failStatus = HttpStatus.NOT_FOUND;
                 return handlerMethod1;
             } else {
-                handlerMethodForPath.failStatus = HttpStatus.METHOD_NOT_ALLOWED;
-                return handlerMethodForPath;
+                HandlerMethod handlerMethod1 = new HandlerMethod();
+                handlerMethod1.failStatus = HttpStatus.METHOD_NOT_ALLOWED;
+                return handlerMethod1;
             }
         } else {
             return handlerMethod;
@@ -76,6 +77,7 @@ public class HandlerMappingImpl implements HandlerMapping {
                     }
                 }
             }
-        }    }
+        }
+    }
 
 }
