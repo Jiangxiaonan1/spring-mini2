@@ -1,5 +1,6 @@
 package com.minispring2.web.core;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.minispring2.core.DefaultBeanFactory;
 
 import java.lang.reflect.InvocationTargetException;
@@ -17,9 +18,10 @@ public class Dispatcher {
         handlerMapping.autoAddHandlerMethod(defaultBeanFactory);
     }
 
-    public void doService(HttpRequest httpRequest, HttpResponse httpResponse) throws InvocationTargetException, IllegalAccessException {
+    public void doService(HttpRequest httpRequest, HttpResponse httpResponse) throws InvocationTargetException, IllegalAccessException, JsonProcessingException {
         HandlerMethod handlerMethod = handlerMapping.getHandlerMethod(httpRequest.requestMappingInfo);
         if(handlerMethod.failStatus != null) {
+            httpResponse.status = handlerMethod.failStatus.value();
             httpResponse.responseBody = String.valueOf(handlerMethod.failStatus.value());
             return;
         }

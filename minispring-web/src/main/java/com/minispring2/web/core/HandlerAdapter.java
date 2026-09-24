@@ -1,5 +1,7 @@
 package com.minispring2.web.core;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -8,5 +10,5 @@ import java.lang.reflect.InvocationTargetException;
  **/
 public interface HandlerAdapter {
 
-    void handle(HttpRequest httpRequest, HttpResponse httpResponse, HandlerMethod handlerMethod) throws InvocationTargetException, IllegalAccessException;
+    void handle(HttpRequest httpRequest, HttpResponse httpResponse, HandlerMethod handlerMethod) throws InvocationTargetException, IllegalAccessException, JsonProcessingException;
 }

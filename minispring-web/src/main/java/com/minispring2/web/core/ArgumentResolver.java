@@ -14,7 +14,7 @@ import java.lang.reflect.Parameter;
  **/
 public class ArgumentResolver {
 
-    public void argumentResolver(HttpRequest httpRequest, Parameter[] parameters, Object[] values) {
+    public void argumentResolver(HttpRequest httpRequest, Parameter[] parameters, Object[] values) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
 
         for (int i = 0; i < parameters.length; i++) {
@@ -47,13 +47,7 @@ public class ArgumentResolver {
                     values[i] = null;
                 } else {
                     Class<?> requestBodyType = parameter.getType();
-                    Object o = null;
-                    try {
-                        o = objectMapper.readValue(requestBody, requestBodyType);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                    values[i] = o;
+                    values[i] = objectMapper.readValue(requestBody, requestBodyType);
                 }
             }
         }

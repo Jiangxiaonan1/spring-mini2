@@ -20,7 +20,7 @@ public class PhraseTest4 {
      *
      * curl http://localhost:8080/hello
      * curl "http://localhost:8080/getUser?userId=12345"
-     * curl -X POST http://localhost:8080/addUser -H "Content-Type: application/json" -d "{\"name\":\"Jerry\",\"age\":19}"
+     * curl.exe -X POST http://localhost:8080/addUser -H "Content-Type: application/json" -d '{\"name\":\"Jerry\",\"age\":19}'
      * @throws Exception
      */
     @Test

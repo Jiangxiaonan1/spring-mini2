@@ -6,5 +6,6 @@ package com.minispring2.web.core;
  **/
 public class HttpResponse {
     public Integer status;
+    public String contentType;
     public String responseBody;
 }

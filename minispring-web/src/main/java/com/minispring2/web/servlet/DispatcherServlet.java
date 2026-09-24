@@ -1,5 +1,6 @@
 package com.minispring2.web.servlet;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.minispring2.web.common.HttpStatus;
 import com.minispring2.web.core.*;
 
@@ -62,10 +63,14 @@ public class DispatcherServlet extends HttpServlet {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            resp.setStatus(HttpStatus.WRONG_PARAM.value());
+            resp.setContentType(httpResponse.contentType);
+            return;
         }
-        resp.setStatus(httpResponse.status == null ? HttpStatus.OK.value() : httpResponse.status);
+        resp.setStatus(httpResponse.status);
+        resp.setContentType(httpResponse.contentType);
         if(httpResponse.responseBody != null) {
-            resp.setContentType("text/plain;charset=UTF-8");
             resp.getWriter().write(httpResponse.responseBody);
         }
     }
