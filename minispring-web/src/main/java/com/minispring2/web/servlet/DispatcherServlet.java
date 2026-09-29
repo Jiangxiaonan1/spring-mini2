@@ -1,7 +1,5 @@
 package com.minispring2.web.servlet;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.minispring2.web.common.HttpStatus;
 import com.minispring2.web.core.*;
 
 import javax.servlet.ServletException;
@@ -10,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,20 +54,14 @@ public class DispatcherServlet extends HttpServlet {
         httpRequest.requestBody = stringBuilder.toString();
         httpRequest.requestMappingInfo = requestMappingInfo;
         HttpResponse httpResponse = new HttpResponse();
-        try {
-            dispatcher.doService(httpRequest, httpResponse);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (JsonProcessingException e) {
-            resp.setStatus(HttpStatus.WRONG_PARAM.value());
-            resp.setContentType(httpResponse.contentType);
-            return;
+        dispatcher.doService(httpRequest, httpResponse);
+        if (httpResponse.status != null) {
+            resp.setStatus(httpResponse.status);
         }
-        resp.setStatus(httpResponse.status);
-        resp.setContentType(httpResponse.contentType);
-        if(httpResponse.responseBody != null) {
+        if (httpResponse.contentType != null) {
+            resp.setContentType(httpResponse.contentType);
+        }
+        if (httpResponse.responseBody != null) {
             resp.getWriter().write(httpResponse.responseBody);
         }
     }

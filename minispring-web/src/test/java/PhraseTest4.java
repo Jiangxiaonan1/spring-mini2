@@ -1,7 +1,5 @@
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minispring2.core.MiniApplicationContext;
-import com.minispring2.demo.dao.UserDao;
-import com.minispring2.web.core.*;
+import com.minispring2.web.core.Dispatcher;
 import com.minispring2.web.servlet.DispatcherServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
@@ -18,13 +16,13 @@ public class PhraseTest4 {
     /**
      * requestParam
      *
-     * curl http://localhost:8080/hello
-     * curl "http://localhost:8080/getUser?userId=12345"
-     * curl.exe -X POST http://localhost:8080/addUser -H "Content-Type: application/json" -d '{\"name\":\"Jerry\",\"age\":19}'
+     * curl.exe http://localhost:8080/user/hello
+     * curl.exe "http://localhost:8080/user/getUser?userId=12345"
+     * curl.exe -X POST http://localhost:8080/user/addUser -H "Content-Type: application/json" -d '{\"name\":\"Jerry\",\"age\":19}'
      * @throws Exception
      */
     @Test
-    public void testGetUser() throws Exception {
+    public void testWithCurl() throws Exception {
         MiniApplicationContext miniApplicationContext = new MiniApplicationContext();
         miniApplicationContext.basicPackages = new String[]{"com.minispring2.demo", "com.minispring2.core", "com.minispring2.web"};
         miniApplicationContext.refresh();
@@ -46,36 +44,4 @@ public class PhraseTest4 {
 
     }
 
-    /**
-     * requestBody
-     * @throws Exception
-     */
-    @Test
-    public void testAddUser() throws Exception {
-        MiniApplicationContext miniApplicationContext = new MiniApplicationContext();
-        miniApplicationContext.basicPackages = new String[]{"com.minispring2.demo", "com.minispring2.core", "com.minispring2.web"};
-        miniApplicationContext.refresh();
-
-        Dispatcher dispatcher = new Dispatcher();
-        dispatcher.init(miniApplicationContext.defaultBeanFactory);
-
-
-
-        UserDao userDao = new UserDao();
-        userDao.setName("Jerry");
-        userDao.setAge(19);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String s = objectMapper.writeValueAsString(userDao);
-
-        HttpRequest httpRequest = new HttpRequest();
-        httpRequest.requestBody = s;
-        RequestMappingInfo requestMappingInfo = new RequestMappingInfo();
-        requestMappingInfo.path = "/addUser";
-        requestMappingInfo.method = RequestMethod.POST;
-        httpRequest.requestMappingInfo = requestMappingInfo;
-        HttpResponse httpResponse = new HttpResponse();
-        dispatcher.doService(httpRequest, httpResponse);
-
-        System.out.println(httpResponse.responseBody);
-    }
 }

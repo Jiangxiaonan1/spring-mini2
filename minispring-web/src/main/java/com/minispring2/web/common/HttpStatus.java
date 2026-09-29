@@ -4,7 +4,8 @@ public enum HttpStatus {
     OK(200),
     WRONG_PARAM(400),
     NOT_FOUND(404),
-    METHOD_NOT_ALLOWED(405);
+    METHOD_NOT_ALLOWED(405),
+    INTERNAL_ERROR(500);
 
     private final int value;
 

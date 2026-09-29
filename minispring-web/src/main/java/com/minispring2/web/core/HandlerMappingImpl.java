@@ -10,6 +10,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -18,6 +20,9 @@ import java.util.Objects;
 public class HandlerMappingImpl implements HandlerMapping {
 
     public final Map<RequestMappingInfo, HandlerMethod> requestMappingInfoMap = new HashMap<>();
+    // 判断是否有{}
+    Pattern p = Pattern.compile(".*\\{[a-zA-Z]*\\}.*");
+
 
     @Override
     public HandlerMethod getHandlerMethodForPath(RequestMappingInfo requestMappingInfo) {
@@ -33,6 +38,19 @@ public class HandlerMappingImpl implements HandlerMapping {
     @Override
     public HandlerMethod getHandlerMethod(RequestMappingInfo requestMappingInfo) {
         HandlerMethod handlerMethod = requestMappingInfoMap.get(requestMappingInfo);
+        if(handlerMethod == null) {
+            for(RequestMappingInfo requestMappingInfo1 : requestMappingInfoMap.keySet()) {
+                if(requestMappingInfo1.regexPath != null) {
+                    Pattern p = Pattern.compile(requestMappingInfo1.regexPath);
+                    Matcher m = p.matcher(requestMappingInfo.path);
+                    if(m.find() && Objects.equals(requestMappingInfo1.method.name(), requestMappingInfo.method.name())) {
+                        requestMappingInfo.regexPath = p.pattern();
+                        return requestMappingInfoMap.get(requestMappingInfo1);
+                    }
+                }
+            }
+        }
+
         if(handlerMethod == null) {
             HandlerMethod handlerMethodForPath = getHandlerMethodForPath(requestMappingInfo);
             if(handlerMethodForPath == null) {
@@ -60,14 +78,26 @@ public class HandlerMappingImpl implements HandlerMapping {
                 Method[] declaredMethods = aClass.getDeclaredMethods();
                 if(declaredMethods != null) {
                     for (Method method : declaredMethods) {
-                        method.getAnnotations();
                         if(AnnotationUtils.hasMeta(method.getAnnotations(), RequestMapping.class)) {
                             com.minispring2.web.annotation.RequestMapping annotation = method.getAnnotation(com.minispring2.web.annotation.RequestMapping.class);
                             if(annotation != null && annotation.value() != null) {
-                                RequestMappingInfo requestMappingInfo = new RequestMappingInfo(annotation.value(), annotation.requestMethod());
+                                // 检测类上有没有url前缀
+                                String urlPrefix = "";
+                                RequestMapping annotation1 = aClass.getAnnotation(RequestMapping.class);
+                                if(annotation1 != null && annotation.value() != null) {
+                                    urlPrefix = annotation1.value();
+                                }
+                                String wholeUrl = urlPrefix + annotation.value();
+
+                                RequestMappingInfo requestMappingInfo = new RequestMappingInfo(wholeUrl, annotation.requestMethod());
+                                if (p.matcher(wholeUrl).find()) {
+                                    requestMappingInfo.regexPath = wholeUrl.replaceFirst("\\{.*\\}", "(.*)");
+                                }
+
                                 if(requestMappingInfoMap.get(requestMappingInfo) != null) {
                                     throw new RuntimeException("MVC中出现重复的URL映射");
                                 }
+
                                 HandlerMethod handlerMethod = new HandlerMethod();
                                 handlerMethod.methodName = method;
                                 handlerMethod.object = o;

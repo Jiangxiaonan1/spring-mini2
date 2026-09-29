@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * @description
  * @create 2026-09-11 09:17:51
  **/
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestMapping {
     String value() default "";

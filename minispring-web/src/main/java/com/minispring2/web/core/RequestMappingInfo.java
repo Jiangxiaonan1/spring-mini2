@@ -8,6 +8,7 @@ import java.util.Objects;
  **/
 public class RequestMappingInfo {
     public String path;
+    public String regexPath;
     public RequestMethod method;
 
     public RequestMappingInfo(String path, RequestMethod method) {

@@ -11,6 +11,7 @@ import com.minispring2.web.core.RequestMethod;
  * @since 2026-09-09 17:21:17
  **/
 @Controller
+@RequestMapping(value = "/user")
 public class UserController {
 
     @Autowired
@@ -32,6 +33,11 @@ public class UserController {
 
     @RequestMapping("/getUser")
     public String getUser(@RequestParam("userId") Long userId) {
+        return userService.getUser(userId).toString();
+    }
+
+    @RequestMapping("/getUserByPath/{id}")
+    public String getUserWithPath(@PathVariable Long userId) {
         return userService.getUser(userId).toString();
     }
 
