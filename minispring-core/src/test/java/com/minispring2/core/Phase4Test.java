@@ -1,7 +1,7 @@
 package com.minispring2.core;
 
 import com.minispring2.core.beanPostProfessor.LoggingBeanPostProcessor;
-import com.minispring2.demo.model.BeanDefinition;
+import com.minispring2.core.model.BeanDefinition;
 import com.minispring2.demo.model.UserInterface;
 import com.minispring2.demo.model.UserService;
 import org.junit.jupiter.api.Test;

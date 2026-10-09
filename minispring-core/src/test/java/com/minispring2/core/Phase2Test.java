@@ -1,8 +1,8 @@
 package com.minispring2.core;
 
 import com.minispring2.demo.dao.UserDao;
-import com.minispring2.demo.model.BeanDefinition;
-import com.minispring2.demo.model.RuntimeBeanReference;
+import com.minispring2.core.model.BeanDefinition;
+import com.minispring2.core.model.RuntimeBeanReference;
 import com.minispring2.demo.model.UserService;
 import org.junit.jupiter.api.Test;
 

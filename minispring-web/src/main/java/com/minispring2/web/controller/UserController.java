@@ -16,6 +16,13 @@ public class UserController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    public UserController() {
+    }
 
     public UserService getUserService() {
         return userService;

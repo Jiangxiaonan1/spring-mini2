@@ -2,7 +2,7 @@ package com.minispring2.support;
 
 import com.minispring2.annotation.AnnotationUtils;
 import com.minispring2.annotation.Component;
-import com.minispring2.demo.model.BeanDefinition;
+import com.minispring2.core.model.BeanDefinition;
 
 import java.io.File;
 import java.io.IOException;

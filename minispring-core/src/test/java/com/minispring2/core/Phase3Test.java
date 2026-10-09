@@ -1,5 +1,7 @@
 package com.minispring2.core;
 
+import com.minispring2.core.model.BeanDefinition;
+import com.minispring2.core.model.RuntimeBeanReference;
 import com.minispring2.demo.model.*;
 import org.junit.jupiter.api.Test;
 

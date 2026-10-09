@@ -1,4 +1,4 @@
-package com.minispring2.demo.model;
+package com.minispring2.core.model;
 
 /**
  * Bean 属性中的依赖引用，用于和普通值（如 String）区分。

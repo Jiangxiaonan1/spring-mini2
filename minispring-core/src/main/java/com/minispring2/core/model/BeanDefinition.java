@@ -1,4 +1,4 @@
-package com.minispring2.demo.model;
+package com.minispring2.core.model;
 
 import java.util.ArrayList;
 import java.util.List;

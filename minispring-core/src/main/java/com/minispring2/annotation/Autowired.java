@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * @description
  * @create 2026-09-11 15:26:19
  **/
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Autowired {
 }

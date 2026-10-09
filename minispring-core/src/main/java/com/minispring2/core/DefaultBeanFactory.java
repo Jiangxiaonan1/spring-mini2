@@ -3,11 +3,12 @@ package com.minispring2.core;
 import com.minispring2.annotation.AnnotationUtils;
 import com.minispring2.annotation.Autowired;
 import com.minispring2.core.beanPostProfessor.BeanPostProcessor;
-import com.minispring2.demo.model.BeanDefinition;
-import com.minispring2.demo.model.RuntimeBeanReference;
+import com.minispring2.core.model.BeanDefinition;
+import com.minispring2.core.model.RuntimeBeanReference;
 import com.minispring2.support.Scan;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -16,13 +17,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 简易 Bean 工厂：根据 {@link com.minispring2.demo.model.BeanDefinition} 创建并缓存单例 Bean。
+ * 简易 Bean 工厂：根据 {@link BeanDefinition} 创建并缓存单例 Bean。
  *
  * @since 2026-07-28
  */
 public class DefaultBeanFactory {
 
-    public final Map<String, Object> singletonBeanMap = new HashMap<>();
+    private final Map<String, Object> singletonBeanMap = new HashMap<>();
     private final Map<String, Object> earlySingletonBeanMap = new HashMap<>();
     private final Map<String, ObjectFactory> beanFactory = new HashMap<>();
     private final Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
@@ -125,7 +126,25 @@ public class DefaultBeanFactory {
     public Object instantiate(BeanDefinition beanDefinition) {
         Class<?> aClass = beanDefinition.getaClass();
         try {
-            return aClass.getDeclaredConstructor().newInstance();
+            Constructor<?>[] declaredConstructors = aClass.getDeclaredConstructors();
+            Class[] parameterTypes = null;
+            for (Constructor constructor : declaredConstructors) {
+                if (AnnotationUtils.hasMeta(constructor.getAnnotations(), Autowired.class)) {
+                    if(parameterTypes != null) {
+                        throw new RuntimeException("多个构造方法，未指定哪一个");
+                    }
+                    parameterTypes = constructor.getParameterTypes();
+                }
+            }
+            if(parameterTypes != null) {
+                List<Object> inputObjects = new ArrayList();
+                for (Class clazz : parameterTypes) {
+                    inputObjects.add(getBeanForType(clazz));
+                }
+                return aClass.getDeclaredConstructor(parameterTypes).newInstance(inputObjects.toArray());
+            } else {
+                return aClass.getDeclaredConstructor().newInstance();
+            }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
