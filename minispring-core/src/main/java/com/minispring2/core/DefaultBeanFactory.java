@@ -2,6 +2,7 @@ package com.minispring2.core;
 
 import com.minispring2.annotation.AnnotationUtils;
 import com.minispring2.annotation.Autowired;
+import com.minispring2.annotation.Primary;
 import com.minispring2.core.beanPostProfessor.BeanPostProcessor;
 import com.minispring2.core.model.BeanDefinition;
 import com.minispring2.core.model.RuntimeBeanReference;
@@ -11,10 +12,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 简易 Bean 工厂：根据 {@link BeanDefinition} 创建并缓存单例 Bean。
@@ -64,15 +62,7 @@ public class DefaultBeanFactory {
     }
 
     public Object getBeanForType(Class<?> clazz) {
-        List<String> beanNames = getBeanNamesForType(clazz);
-        if(beanNames.size() == 0) {
-            throw new RuntimeException("未找到该类型的Bean，" + clazz.getName());
-        }
-        if(beanNames.size() > 1) {
-            throw new RuntimeException("该类型匹配多个Bean，" + clazz.getName());
-        }
-
-        return getBean(beanNames.get(0));
+        return getBean(getBeanNameForType(clazz));
 
     }
 
@@ -84,6 +74,38 @@ public class DefaultBeanFactory {
             }
         }
         return beanNames;
+    }
+
+    public String getBeanNameForType(Class<?> clazz) {
+        Map<String, Class> map = new HashMap<>();
+        for (String beanName : beanDefinitionMap.keySet()) {
+            Class<?> aClass = beanDefinitionMap.get(beanName).getaClass();
+            if(clazz.isAssignableFrom(aClass)) {
+                map.put(beanName, aClass);
+            }
+        }
+        Map<String, Class> resultMap = new HashMap<>();
+        if(map.size() > 1) {
+            for (String beanName : map.keySet()) {
+                Class aClass = map.get(beanName);
+                if(AnnotationUtils.hasMeta(aClass.getAnnotations(), Primary.class)) {
+                    resultMap.put(beanName, aClass);
+                }
+            }
+            if(resultMap.isEmpty()) {
+                throw new RuntimeException(clazz.getName() + "存在多个Bean，未用Primary指定哪一个");
+            }
+            if(resultMap.size() > 1) {
+                throw new RuntimeException(clazz.getName() + "存在多个相同类型的Bean使用了Primary注解");
+            }
+
+            return resultMap.keySet().iterator().next();
+
+        } else if (map.size() == 0) {
+            throw new RuntimeException("未找到该类型的Bean，" + clazz.getName());
+        } else {
+            return map.keySet().iterator().next();
+        }
     }
 
     public Object createBean(String beanName) {

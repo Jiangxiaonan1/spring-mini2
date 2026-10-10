@@ -2,6 +2,7 @@ package com.minispring2.web.controller;
 
 import com.minispring2.annotation.Autowired;
 import com.minispring2.demo.dao.UserDao;
+import com.minispring2.demo.model.UserInterface;
 import com.minispring2.demo.model.UserService;
 import com.minispring2.web.annotation.*;
 import com.minispring2.web.core.RequestMethod;
@@ -15,7 +16,7 @@ import com.minispring2.web.core.RequestMethod;
 public class UserController {
 
     @Autowired
-    UserService userService;
+    UserInterface userService;
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
@@ -24,11 +25,11 @@ public class UserController {
     public UserController() {
     }
 
-    public UserService getUserService() {
+    public UserInterface getUserService() {
         return userService;
     }
 
-    public void setUserService(UserService userService) {
+    public void setUserService(UserInterface userService) {
         this.userService = userService;
     }
 
