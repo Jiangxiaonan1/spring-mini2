@@ -17,6 +17,13 @@ import java.util.*;
 /**
  * 简易 Bean 工厂：根据 {@link BeanDefinition} 创建并缓存单例 Bean。
  *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  * @since 2026-07-28
  */
 public class DefaultBeanFactory {
@@ -29,6 +36,9 @@ public class DefaultBeanFactory {
 
     public void addSingleton(String beanName, Object o) {
         singletonBeanMap.put(beanName, o);
+        earlySingletonBeanMap.remove(beanName);
+        beanFactory.remove(beanName);
+
     }
 
     public Object getSingleton(String beanName) {
@@ -123,9 +133,10 @@ public class DefaultBeanFactory {
         }
         injectAutowiredFields(instantiate);
         Object initialize = initialize(instantiate);
-        singletonBeanMap.put(beanName, initialize);
-        earlySingletonBeanMap.remove(beanName);
-        beanFactory.remove(beanName);
+        if(AfterPropertiesSet.class.isAssignableFrom(initialize.getClass())) {
+            initialize = ((AfterPropertiesSet) initialize).afterPropertiesSet();
+        }
+        addSingleton(beanName, initialize);
 
         return initialize;
     }
@@ -182,7 +193,8 @@ public class DefaultBeanFactory {
                     }
                     Object fieldValue = propertyValue.getFieldValue();
                     if(fieldValue instanceof RuntimeBeanReference) {
-                        fieldValue = getBeanForType(((RuntimeBeanReference) fieldValue).getaClass());
+//                        fieldValue = getBeanForType(((RuntimeBeanReference) fieldValue).getaClass());
+                        fieldValue = getBean(((RuntimeBeanReference) fieldValue).getBeanName());
                     }
 
                     for (Field field : o.getClass().getDeclaredFields()) {

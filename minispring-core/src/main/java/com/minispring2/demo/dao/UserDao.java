@@ -1,10 +1,13 @@
 package com.minispring2.demo.dao;
 
+import com.minispring2.annotation.Component;
+
 /**
  * 演示用的用户数据访问对象。
  *
  * @since 2026-07-28
  */
+@Component
 public class UserDao {
     private Long id;
     private String name;

@@ -1,7 +1,9 @@
 package com.minispring2.demo.model;
 
+import com.minispring2.annotation.Autowired;
 import com.minispring2.annotation.Component;
 import com.minispring2.annotation.Primary;
+import com.minispring2.core.AfterPropertiesSet;
 import com.minispring2.demo.dao.UserDao;
 
 /**
@@ -11,10 +13,11 @@ import com.minispring2.demo.dao.UserDao;
  */
 @Primary
 @Component
-public class UserService implements UserInterface {
+public class UserService implements UserInterface, AfterPropertiesSet {
 
     private String name;
 
+    @Autowired
     private UserDao UserDao;
 
     @Override
@@ -39,7 +42,7 @@ public class UserService implements UserInterface {
     public UserDao getUser(Long id) {
         UserDao userDao = new UserDao();
         userDao.setId(id);
-        userDao.setName("Tom");
+        userDao.setName(this.name == null ? "Tom" : this.name + "Tom");
         userDao.setAge(20);
         return userDao;
     }
@@ -48,6 +51,16 @@ public class UserService implements UserInterface {
     public UserDao addUser(UserDao userDao) {
         userDao.setId(19787263L);
         return userDao;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Object afterPropertiesSet() {
+        String prefix = "prefix:afterPropertiesSet-";
+        this.setName(this.getName() == null ? prefix : prefix + this.getName());
+        return this;
     }
 }
 

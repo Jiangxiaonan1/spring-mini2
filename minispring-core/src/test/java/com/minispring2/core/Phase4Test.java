@@ -2,6 +2,7 @@ package com.minispring2.core;
 
 import com.minispring2.core.beanPostProfessor.LoggingBeanPostProcessor;
 import com.minispring2.core.model.BeanDefinition;
+import com.minispring2.demo.dao.UserDao;
 import com.minispring2.demo.model.UserInterface;
 import com.minispring2.demo.model.UserService;
 import org.junit.jupiter.api.Test;
@@ -26,8 +27,11 @@ public class Phase4Test {
         propertyValue.setFieldName("name");
         propertyValue.setFieldValue("苹果");
         beanDefinition.setPropertyValueList(Arrays.asList(propertyValue));
+        BeanDefinition beanDefinition1 = new BeanDefinition();
+        beanDefinition1.setaClass(UserDao.class);
 
         defaultBeanFactory.addBeanDefinition("userService", beanDefinition);
+        defaultBeanFactory.addBeanDefinition("userDao", beanDefinition1);
 
         UserInterface userService = (UserInterface) defaultBeanFactory.getBean("userService");
         System.out.println(userService);
