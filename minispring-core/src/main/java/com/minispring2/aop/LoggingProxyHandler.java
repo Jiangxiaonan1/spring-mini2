@@ -2,33 +2,25 @@ package com.minispring2.aop;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.List;
 
 public class LoggingProxyHandler implements InvocationHandler {
 
-    private List<Advisor> advisorList;
-
     private Object target;
 
-    public LoggingProxyHandler(List<Advisor> advisorList, Object target) {
-        this.advisorList = advisorList;
+    public LoggingProxyHandler() {
+
+    }
+
+    public LoggingProxyHandler(Object target) {
         this.target = target;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if(advisorList != null && !advisorList.isEmpty()) {
-            for (Advisor advisor : advisorList) {
-                List<Matcher> matcherList = advisor.getMatcher();
-                for (Matcher matcher : matcherList) {
-                    if(matcher instanceof NameMatcher) {
-                        if(matcher.match(method.getName())) {
-                            advisor.enhance();
-                        }
-                    }
-                }
-            }
-        }
-        return method.invoke(target, args);
+        long startTime = System.nanoTime();
+        Object invoke = method.invoke(target, args);
+        long endTime = System.nanoTime();
+        System.out.println(target.getClass().getName() + "."+ method.getName() + "方法总耗时：" + (endTime - startTime) / 1000000 + "秒");
+        return invoke;
     }
 }

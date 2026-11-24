@@ -1,5 +1,6 @@
 package com.minispring2.demo.model;
 
+import com.minispring2.annotation.Autowired;
 import com.minispring2.annotation.Component;
 import com.minispring2.demo.dao.UserDao;
 
@@ -10,12 +11,15 @@ import com.minispring2.demo.dao.UserDao;
 @Component
 public class EmployeeService implements UserInterface{
 
+    @Autowired
+    SalaryService salaryService;
+
     /**
      * @return
      */
     @Override
     public String getName() {
-        return "获取雇员名字";
+        return "此时在调用[EmployeeService]的[getName]方法";
     }
 
     /**
@@ -33,7 +37,8 @@ public class EmployeeService implements UserInterface{
     public UserDao getUser(Long id) {
         UserDao userDao = new UserDao();
         userDao.setId(id);
-        userDao.setName("getUser");
+        userDao.setName("林月如");
+        salaryService.printSalary();
         return userDao;
     }
 

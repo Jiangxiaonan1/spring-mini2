@@ -1,4 +1,6 @@
-package com.minispring2.aop;
+package com.minispring2.aop.advisor;
+
+import com.minispring2.aop.matcher.Matcher;
 
 import java.util.List;
 

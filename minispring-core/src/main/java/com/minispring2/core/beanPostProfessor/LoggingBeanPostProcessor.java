@@ -1,12 +1,10 @@
 package com.minispring2.core.beanPostProfessor;
 
-import com.minispring2.aop.JdkDynamicProxy;
-import com.minispring2.aop.LoggingAdvisor;
-import com.minispring2.aop.NameMatcher;
+import com.minispring2.annotation.Component;
+import com.minispring2.aop.CGlibDynamicProxy;
 import com.minispring2.demo.model.UserInterface;
 
-import java.util.Arrays;
-
+@Component
 public class LoggingBeanPostProcessor implements BeanPostProcessor {
 
     @Override
@@ -14,10 +12,8 @@ public class LoggingBeanPostProcessor implements BeanPostProcessor {
         if(! UserInterface.class.isAssignableFrom(object.getClass())) {
             return object;
         }
-        return JdkDynamicProxy.getProxy(object,
-                Arrays.asList(
-                        new LoggingAdvisor(
-                                Arrays.asList(
-                                        new NameMatcher(Arrays.asList("getName"))))));
+//        return JdkDynamicProxy.getProxy(object,new LoggingProxyHandler(object));
+        CGlibDynamicProxy cGlibDynamicProxy = new CGlibDynamicProxy(object);
+        return cGlibDynamicProxy.getProxy();
     }
 }

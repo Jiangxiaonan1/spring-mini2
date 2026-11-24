@@ -6,6 +6,7 @@ import com.minispring2.annotation.Primary;
 import com.minispring2.core.beanPostProfessor.BeanPostProcessor;
 import com.minispring2.core.model.BeanDefinition;
 import com.minispring2.core.model.RuntimeBeanReference;
+import com.minispring2.demo.model.UserInterface;
 import com.minispring2.support.Scan;
 
 import java.lang.annotation.Annotation;
@@ -50,6 +51,7 @@ public class DefaultBeanFactory {
     }
 
     public Object getBean(String beanName) {
+        System.out.println("getBean:" + beanName);
         Object o = singletonBeanMap.get(beanName);
         if(o != null) {
             System.out.println(beanName + "的创建需要访问一级缓存");
@@ -128,9 +130,6 @@ public class DefaultBeanFactory {
         beanFactory.put(beanName, () -> instantiate);
         System.out.println(beanName + "填充属性");
         populate(instantiate, beanDefinition);
-        if("userController".equals(beanName)) {
-            System.out.println("userController -> populate");
-        }
         injectAutowiredFields(instantiate);
         Object initialize = initialize(instantiate);
         if(AfterPropertiesSet.class.isAssignableFrom(initialize.getClass())) {
@@ -217,6 +216,9 @@ public class DefaultBeanFactory {
     }
 
     private Object initialize (Object object) {
+        if(object instanceof UserInterface) {
+            System.out.println(1);
+        }
         for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
             object = beanPostProcessor.beforeInitialization(object);
             object = beanPostProcessor.afterInitialization(object);
